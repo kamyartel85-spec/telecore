@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="cyberpunk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeleCore // پنل مدیریت یکپارچه تلگرام</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-cyberpunk">
+
+  <!-- HUD Top Bar -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <div class="cyber-logo">
+        <span class="glitch-text" data-text="TELE•CORE">TELE•CORE</span>
+        <span class="badge-version">v2.4 [PRO]</span>
+      </div>
+      <div class="railway-badge" title="پوشه ذخیره‌سازی متصل به ولوم ریلوی">
+        <span class="status-dot pulse"></span>
+        <span class="badge-text" id="volume-indicator">RAILWAY VOLUME: <code class="mono-code">/data</code> [ONLINE]</span>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <!-- Live Clock & Date -->
+      <div class="time-widget">
+        <div class="live-clock mono-font" id="live-clock">--:--:--</div>
+        <div class="live-date" id="live-date">در حال دریافت تاریخ...</div>
+      </div>
+
+      <!-- Language Selector -->
+      <div class="control-group">
+        <label for="lang-select" class="visually-hidden">زبان</label>
+        <select id="lang-select" class="cyber-select">
+          <option value="fa" selected>🇮🇷 فارسی</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+      </div>
+
+      <!-- 3 Theme Switchers -->
+      <div class="theme-picker" role="radiogroup" aria-label="انتخاب پوسته">
+        <button class="theme-btn active" data-theme-val="cyberpunk" title="سایبرپانک دارک">
+          <span class="theme-swatch cyberpunk-swatch"></span>
+          <span class="theme-label">سایبرپانک</span>
+        </button>
+        <button class="theme-btn" data-theme-val="cream" title="کرمی نوستالژیک">
+          <span class="theme-swatch cream-swatch"></span>
+          <span class="theme-label">کرمی</span>
+        </button>
+        <button class="theme-btn" data-theme-val="light" title="سفید مینیمال">
+          <span class="theme-swatch light-swatch"></span>
+          <span class="theme-label">سفید</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Body Layout -->
+  <div class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="hud-label">منوی ناوبری</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-tab active" data-tab="tab-overview">
+          <span class="tab-icon">⚡</span>
+          <span class="tab-title" data-i18n="navOverview">داشبورد و آمار زنده</span>
+          <span class="tab-indicator"></span>
+        </button>
+        <button class="nav-tab" data-tab="tab-accounts">
+          <span class="tab-icon">👥</span>
+          <span class="tab-title" data-i18n="navAccounts">مدیریت اکانت‌ها و کدها</span>
+          <span class="badge-count" id="accounts-count-badge">۰</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-actions">
+          <span class="tab-icon">🎯</span>
+          <span class="tab-title" data-i18n="navActions">عملیات گروهی (لایک/جوین/رای)</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-bot-starter">
+          <span class="tab-icon">🤖</span>
+          <span class="tab-title" data-i18n="navBotStarter">استارت تخصصی ربات‌ها</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-inbox">
+          <span class="tab-icon">💬</span>
+          <span class="tab-title" data-i18n="navInbox">پیوی و ربات‌ها</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-scheduler">
+          <span class="tab-icon">⏰</span>
+          <span class="tab-title" data-i18n="navScheduler">سِلف بات و زمان‌بندی</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-cleanup">
+          <span class="tab-icon">🧹</span>
+          <span class="tab-title" data-i18n="navCleanup">پاکسازی و خروج (گپ/چنل/بات)</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-storage">
+          <span class="tab-icon">💾</span>
+          <span class="tab-title" data-i18n="navStorage">ذخیره‌سازی و ریلوی</span>
+        </button>
+      </nav>
+
+      <!-- Quick Session Status Widget in Sidebar -->
+      <div class="sidebar-footer">
+        <div class="mini-health-card">
+          <div class="mini-header">
+            <span>وضعیت سشن‌ها</span>
+            <span class="mono-font text-cyan" id="health-ratio">۰ / ۰ سالم</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100%;"></div>
+          </div>
+          <small class="text-muted">مسیر: <code class="mono-code">/data/sessions/</code></small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- ================= 1. OVERVIEW & LIVE FEED TAB ================= -->
+      <section id="tab-overview" class="content-panel active">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title" data-i18n="overviewTitle">داشبورد مانیتورینگ زنده</h1>
+            <p class="panel-desc" data-i18n="overviewDesc">نمای کلی فعالیت‌ها، آخرین عملیات‌ها و سلامت اکانت‌های فعال</p>
+          </div>
+          <button class="btn btn-outline" id="btn-refresh-stats">🔄 به‌روزرسانی آمار</button>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrap bg-cyan-glow">👥</div>
+            <div class="stat-info">
+              <span class="stat-label">اکانت‌های متصل</span>
+              <span class="stat-value mono-font" id="stat-total-accounts">۰</span>
+              <span class="stat-sub text-green">● فعال</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap bg-pink-glow">🎯</div>
+            <div class="stat-info">
+              <span class="stat-label">عملیات موفق امروز</span>
+              <span class="stat-value mono-font" id="stat-today-ops">۰</span>
+              <span class="stat-sub text-cyan">جوین، لایک، رای</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap bg-amber-glow">⏰</div>
+            <div class="stat-info">
+              <span class="stat-label">وظایف سلف / زمان‌بندی</span>
+              <span class="stat-value mono-font" id="stat-active-tasks">۰</span>
+              <span class="stat-sub text-amber">در حال اجرا در پس‌زمینه</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap bg-purple-glow">🛡️</div>
+            <div class="stat-info">
+              <span class="stat-label">نرخ سلامت سشن</span>
+              <span class="stat-value mono-font">۱۰۰٪</span>
+              <span class="stat-sub text-green">بدون اسپم بلاک</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT EVENTS & UPCOMING ACTIONS -->
+        <div class="dashboard-activity-grid">
+          <div class="cyber-activity-card">
+            <div class="activity-card-header">
+              <div>
+                <h3 class="activity-card-title">رویدادهای اخیر</h3>
+                <p class="activity-card-subtitle">آخرین تغییرات حساب‌ها و ارسال‌ها</p>
+              </div>
+              <button class="activity-card-link" onclick="document.querySelector('[data-tab=\'tab-accounts\']').click()">مشاهده حساب‌ها &larr;</button>
+            </div>
+            
+            <div class="event-items-list" id="recent-events-container"></div>
+          </div>
+
+          <div class="cyber-activity-card">
+            <div class="activity-card-header">
+              <div>
+                <h3 class="activity-card-title">اقدام‌های بعدی</h3>
+                <p class="activity-card-subtitle">پیام‌هایی که به‌زودی اجرا می‌شوند</p>
+              </div>
+              <button class="activity-card-link" onclick="document.querySelector('[data-tab=\'tab-scheduler\']').click()">همه زمان‌بندی‌ها</button>
+            </div>
+
+            <div class="upcoming-items-list" id="upcoming-actions-container"></div>
+          </div>
+        </div>
+
+        <!-- Live Activity Log Terminal -->
+        <div class="cyber-card">
+          <div class="card-header-flex">
+            <div class="flex-title">
+              <span class="terminal-prefix">&gt;_</span>
+              <h3>گزارش زنده فعالیت‌ها (Live Activity Log)</h3>
+            </div>
+            <div class="terminal-actions">
+              <span class="terminal-dot green"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot red"></span>
+              <button class="btn btn-sm btn-ghost" id="btn-clear-logs">پاکسازی لاگ</button>
+            </div>
+          </div>
+          <div class="terminal-viewport" id="terminal-log-stream"></div>
+        </div>
+      </section>
+
+      <!-- ================= 2. ACCOUNTS & OTP CODES TAB ================= -->
+      <section id="tab-accounts" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title">مدیریت اکانت‌های تلگرام</h1>
+            <p class="panel-desc">فهرست، جستجوی پیشرفته، دسته‌بندی‌های شخصی، آمار کشور و سال ساخت، و قطع اتصال</p>
+          </div>
+          <div class="flex-gap">
+            <button class="btn btn-primary" id="btn-open-add-account" onclick="openAddAccountModal()">➕ افزودن اکانت جدید</button>
+            <button class="btn btn-outline" id="btn-create-category" onclick="openCategoryModal()">📁 ساخت دسته جدید</button>
+            <button class="btn btn-outline" id="btn-check-all-sessions">⚡ بررسی سلامت همه</button>
+          </div>
+        </div>
+
+        <div class="account-stats-bar">
+          <div class="acc-stat-pill active" data-filter-type="all" data-filter-val="all">
+            <span class="stat-pill-title">کل اکانت‌ها:</span>
+            <span class="stat-pill-count mono-font" id="count-all">۰</span>
+          </div>
+          <div class="acc-stat-pill" data-filter-type="status" data-filter-val="online">
+            <span class="stat-pill-title text-green">● متصل:</span>
+            <span class="stat-pill-count mono-font" id="count-online">۰</span>
+          </div>
+          <div class="acc-stat-pill" data-filter-type="status" data-filter-val="disconnected">
+            <span class="stat-pill-title text-pink">● قطع اتصال:</span>
+            <span class="stat-pill-count mono-font" id="count-disconnected">۰</span>
+          </div>
+        </div>
+
+        <div class="filter-controls-box cyber-card">
+          <div class="filter-row">
+            <span class="filter-label">🌍 فیلتر بر حسب کشور:</span>
+            <div class="filter-chips-list" id="country-chips-container"></div>
+          </div>
+
+          <div class="filter-row mt-2">
+            <span class="filter-label">📅 فیلتر سال ساخت اکانت:</span>
+            <div class="filter-chips-list" id="year-chips-container"></div>
+          </div>
+
+          <div class="filter-row mt-2">
+            <span class="filter-label">🏷️ دسته‌بندی‌های شخصی:</span>
+            <div class="filter-chips-list" id="category-chips-container"></div>
+          </div>
+        </div>
+
+        <div class="search-omnibox-wrap mt-4">
+          <div class="search-omnibox">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="acc-smart-search" class="cyber-input search-field" placeholder="جستجوی همه‌جانبه: شماره تلفن (+98...)، آیدی (@id)، آیدی عددی (User ID: 12345...)، نام پروفایل یا برچسب...">
+            <button class="btn btn-sm btn-ghost" id="btn-clear-smart-search" title="پاکسازی جستجو">✕</button>
+          </div>
+          <div class="search-meta-text">
+            <span>نمایش <strong id="filter-result-count" class="mono-font">۰</strong> اکانت بر اساس فیلترهای انتخابی</span>
+          </div>
+        </div>
+
+        <div class="accounts-accordion-list mt-4" id="accounts-container"></div>
+
+        <div class="cyber-card mt-6">
+          <div class="card-header-flex">
+            <h3>📬 دریافت کدهای ورود اخیر (Telegram Login Codes)</h3>
+            <span class="badge-status online">سیستم شنود سرویس تلگرام فعال است</span>
+          </div>
+          <div class="table-responsive">
+            <table class="cyber-table">
+              <thead>
+                <tr>
+                  <th>اکانت</th>
+                  <th>شماره تلفن</th>
+                  <th>کد دریافتی (Login Code)</th>
+                  <th>زمان دریافت</th>
+                  <th>عملیات</th>
+                </tr>
+              </thead>
+              <tbody id="otp-history-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. MASS ACTIONS TAB ================= -->
+      <section id="tab-actions" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title" data-i18n="actionsTitle">عملیات گروهی و هماهنگ</h1>
+            <p class="panel-desc" data-i18n="actionsDesc">انجام دسته‌جمعی کارهایی مثل جوین به کانال/گروه، ارسال کامنت، ثبت ری‌اکشن و لایک، یا رای دادن به نظرسنجی با اولویت انتخابی اکانت‌ها</p>
+          </div>
+        </div>
+
+        <div class="account-priority-box cyber-card">
+          <div class="flex-between">
+            <div>
+              <h3 data-i18n="priorityBoxTitle">👥 انتخاب اکانت‌ها و اولویت اجرا (با کلیک مستقیم)</h3>
+              <p class="text-xs text-muted" data-i18n="priorityBoxDesc">روی اکانت‌ها کلیک کنید؛ ترتیب کلیک شما دقیقاً اولویت اجرای عملیات را تعیین می‌کند.</p>
+            </div>
+            <div class="flex-gap flex-wrap">
+              <button type="button" class="btn btn-sm btn-outline" onclick="selectAllAccountsSequential()" data-i18n="btnSelectAllSeq">⚡ انتخاب همه به ترتیب</button>
+              <button type="button" class="btn btn-sm btn-outline" onclick="selectOnlineAccountsOnly()" data-i18n="btnSelectOnline">🟢 فقط آنلاین‌ها</button>
+              <button type="button" class="btn btn-sm btn-outline" onclick="clearSelectedPriorityAccounts()" data-i18n="btnClearPriority">❌ لغو انتخاب</button>
+            </div>
+          </div>
+
+          <div class="account-priority-grid" id="action-accounts-priority-list"></div>
+          <div class="text-xs text-muted mt-2">
+            <span>تعداد اکانت‌های انتخابی: </span>
+            <strong id="action-selected-accounts-count" class="mono-font text-cyan">۰</strong>
+            <span id="action-priority-order-text" style="margin-right: 12px; margin-left: 12px;"></span>
+          </div>
+        </div>
+
+        <div class="grid-2-cols">
+          <div class="cyber-card">
+            <h3 data-i18n="actionConfigTitle">تنظیمات عملیات</h3>
+            <form id="mass-action-form" class="cyber-form mt-4">
+              <div class="form-group">
+                <label data-i18n="lblActionType">نوع عملیات:</label>
+                <select id="action-type" class="cyber-input" onchange="handleActionTypeChange(this.value)">
+                  <option value="join">🔗 عضویت در کانال یا گروه (Join Channel/Group)</option>
+                  <option value="like">❤️ ثبت ری‌اکشن / لایک پست (Post Reaction)</option>
+                  <option value="comment">💬 ارسال کامنت به پست (Post Comment)</option>
+                  <option value="poll">📊 رای دادن در نظرسنجی (Poll Voting)</option>
+                  <option value="start_bot">🤖 استارت ربات با لینک معرف (Start Bot)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label data-i18n="lblActionTarget">لینک مقصد یا شناسه (Target Link / Username):</label>
+                <input type="text" id="action-target" class="cyber-input mono-font" placeholder="https://t.me/example_channel یا @username یا https://t.me/addlist/..." oninput="inspectTargetLink(this.value)" required>
+                
+                <div class="link-inspector-box mt-2" id="link-inspector-box" style="display: none;">
+                  <div class="inspector-badge">
+                    <span id="inspector-icon">🔍</span>
+                    <span id="inspector-type-text">نوع لینک: شناسایی شد</span>
+                  </div>
+                  <div class="inspector-details text-xs mt-1" id="inspector-desc-text"></div>
+                  <div class="inspector-addlist-option mt-2" id="inspector-addlist-option" style="display: none;">
+                    <label class="checkbox-label text-cyan font-bold text-xs" style="display: flex; gap: 8px; align-items: flex-start; cursor: pointer;">
+                      <input type="checkbox" id="chk-auto-bypass-addlist" checked style="margin-top: 3px;">
+                      <span>⚡ مدیریت محدودیت ۲ ادلیست تلگرام: در صورت پر بودن سقف ۲ ادلیست اکانت، یکی از ادلیست‌های قبلی به صورت خودکار حذف شود بدون اینکه کانال‌های داخل آن خارج شوند.</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" id="group-comment-text" style="display: none;">
+                <label data-i18n="lblCommentText">متن کامنت‌ها (یک کامنت در هر خط برای ارسال چرخشی بین اکانت‌ها):</label>
+                <textarea id="action-comment-input" class="cyber-input" rows="3" placeholder="پروژه بسیار کاربردی و عالی هست! 🔥&#10;تحلیل فوق‌العاده‌ای بود، تشکر 👏&#10;هدف قیمتی بعدی چنده به نظرتون؟"></textarea>
+                
+                <div class="mt-2">
+                  <label class="checkbox-label text-xs" style="display: flex; gap: 8px; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="chk-schedule-comment" onchange="toggleCommentScheduling(this.checked)">
+                    <span data-i18n="lblScheduleCommentToggle">⏰ ذخیره به عنوان تسک زمان‌بندی شده (Scheduler)</span>
+                  </label>
+                </div>
+                <div class="mt-2" id="comment-schedule-details" style="display: none;">
+                  <label class="text-xs text-muted">زمان ارسال زمان‌بندی:</label>
+                  <input type="text" id="comment-schedule-time" class="cyber-input" value="هر روز ساعت ۱۲:۳۰">
+                </div>
+              </div>
+
+              <div class="form-group" id="group-poll-option" style="display: none;">
+                <label data-i18n="lblPollIndex">شماره گزینه نظرسنجی (Option Index):</label>
+                <input type="number" id="poll-option-idx" class="cyber-input" value="1" min="1" max="10">
+              </div>
+
+              <div class="form-group" id="group-reaction-type">
+                <div class="flex-between">
+                  <label data-i18n="lblReactionType">انتخاب ری‌اکشن (کل ری‌اکشن‌های تلگرام):</label>
+                  <span class="text-xs text-cyan font-bold" id="chosen-reaction-preview">ری‌اکشن انتخابی: ❤️</span>
+                </div>
+                <div class="reaction-full-grid mt-2" id="reaction-picker-grid"></div>
+                <div class="mt-2">
+                  <input type="text" id="custom-emoji-input" class="cyber-input" placeholder="یا تایپ هر ایموجی دلخواه دیگر (مثلاً 🗿، 💘، 🫡)..." oninput="setCustomReactionEmoji(this.value)">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label data-i18n="lblActionDelay">فاصله زمانی بین هر اکانت (ثانیه - جهت امنیت و جلوگیری از فلود):</label>
+                <input type="number" id="action-delay" class="cyber-input" value="3" min="1" max="60">
+              </div>
+
+              <button type="submit" class="btn btn-primary w-full" id="btn-start-action" data-i18n="btnStartAction">
+                🚀 شروع اجرای عملیات هماهنگ با اولویت انتخابی
+              </button>
+            </form>
+          </div>
+
+          <div class="cyber-card">
+            <h3>وضعیت اجرای زنده عملیات</h3>
+            <div class="action-status-box mt-4">
+              <div class="status-summary">
+                <span id="current-action-title">آماده برای شروع عملیات جدید</span>
+                <span class="badge-status idle" id="action-badge">آماده (Idle)</span>
+              </div>
+
+              <div class="progress-bar-bg mt-4">
+                <div class="progress-bar-fill" id="action-progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="progress-label mt-2">
+                <span id="action-progress-text">۰ / ۰ انجام شده</span>
+                <span class="mono-font" id="action-percent-text">۰٪</span>
+              </div>
+
+              <div class="mini-terminal mt-4" id="action-sublog">
+                <div class="log-line text-muted">منتظر ثبت دستور توسط کاربر...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3.5 SPECIALIZED BOT STARTER TAB ================= -->
+      <section id="tab-bot-starter" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title" data-i18n="botStarterTitle">🤖 استارت تخصصی و اتوماسیون ربات‌ها</h1>
+            <p class="panel-desc" data-i18n="botStarterDesc">استارت رفرال، آنالیز هوشمند و عضویت خودکار چنل‌های اجباری، و حل تعاملی مرحله‌به‌مرحله کپچا با اولویت دلخواه اکانت‌ها</p>
+          </div>
+          <div class="flex-gap">
+            <button class="btn btn-outline" onclick="resetBotStarterForm()">🔄 بازنشانی فرم</button>
+          </div>
+        </div>
+
+        <div class="cyber-card">
+          <div class="flex-between">
+            <h3 data-i18n="botTargetConfigTitle">🎯 تنظیم لینک و آیدی ربات</h3>
+            <span class="badge-status online" id="bot-parser-status">آماده دریافت لینک</span>
+          </div>
+
+          <div class="form-group mt-3">
+            <label data-i18n="lblBotStartLink">لینک استارت یا نام کاربری ربات (Bot Start Link / Username):</label>
+            <input type="text" id="bot-starter-url" class="cyber-input mono-font" placeholder="https://t.me/CryptoAirdropBot?start=ref_98124 یا @CryptoAirdropBot start_code" oninput="parseBotStartLink(this.value)">
+            
+            <div class="bot-link-parser-pill" id="bot-parser-pill" style="display: none;">
+              <span class="text-xs text-muted">شناسایی شد:</span>
+              <span class="parser-tag" id="parser-bot-username">@نام_ربات</span>
+              <span class="parser-tag" id="parser-bot-param">start=کد_رفرال</span>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="flex-between">
+              <div>
+                <h4 data-i18n="botPriorityTitle">👥 انتخاب اکانت‌ها و اولویت اجرا (با کلیک مستقیم)</h4>
+                <p class="text-xs text-muted" data-i18n="botPriorityDesc">ترتیب کلیک شما، اولویت دقیق ارسال استارت و حل کپچا را تعیین می‌کند.</p>
+              </div>
+              <div class="flex-gap flex-wrap">
+                <div class="form-inline-group" style="display: flex; align-items: center; gap: 8px;">
+                  <label class="text-xs text-muted">حداکثر تعداد اکانت:</label>
+                  <input type="number" id="bot-account-limit" class="cyber-input mono-font text-cyan" style="width: 70px; padding: 4px 8px;" value="5" min="1" max="10" onchange="updateBotAccountLimit(this.value)">
+                </div>
+                <button type="button" class="btn btn-sm btn-outline" onclick="selectAllBotAccountsSequential()">⚡ انتخاب همه به ترتیب</button>
+                <button type="button" class="btn btn-sm btn-outline" onclick="selectOnlineBotAccountsOnly()">🟢 فقط آنلاین‌ها</button>
+                <button type="button" class="btn btn-sm btn-outline" onclick="clearBotAccountsPriority()">❌ پاکسازی</button>
+              </div>
+            </div>
+
+            <div class="account-priority-grid mt-3" id="bot-accounts-priority-list"></div>
+
+            <div class="text-xs text-muted mt-2">
+              <span>تعداد اکانت‌های مجاز انتخابی: </span>
+              <strong id="bot-selected-count-badge" class="mono-font text-cyan">۰</strong>
+              <span id="bot-priority-order-text" style="margin-right: 12px; margin-left: 12px;"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cyber-card mt-4">
+          <h3 data-i18n="botModesTitle">⚙️ انتخاب نوع و متد استارت ربات (۴ حالت تخصصی)</h3>
+          <p class="text-xs text-muted mt-1">متد مورد نظر خود را متناسب با ساختار ربات انتخاب کنید:</p>
+
+          <div class="bot-mode-grid">
+            <div class="bot-mode-card active" id="mode-card-simple" onclick="selectBotStartMode('simple')">
+              <div class="bot-mode-card-header">
+                <span class="bot-mode-card-icon">⚡</span>
+                <span class="bot-mode-indicator"></span>
+              </div>
+              <div class="bot-mode-card-title">۱. استارت خالی (ساده / رفرال)</div>
+              <div class="bot-mode-card-desc">فقط دستور <code>/start [ref]</code> را مستقیماً برای هر اکانت ارسال می‌کند.</div>
+            </div>
+
+            <div class="bot-mode-card" id="mode-card-smart" onclick="selectBotStartMode('smart')">
+              <div class="bot-mode-card-header">
+                <span class="bot-mode-card-icon">🧠</span>
+                <span class="bot-mode-indicator"></span>
+              </div>
+              <div class="bot-mode-card-title">۲. آنالیز و جوین خودکار چنل‌ها</div>
+              <div class="bot-mode-card-desc">ارسال استارت اولیه ➔ اسکن و استخراج هوشمند لینک‌ها ➔ عضویت خودکار ➔ استارت مجدد یا تایید.</div>
+            </div>
+
+            <div class="bot-mode-card" id="mode-card-manual" onclick="selectBotStartMode('manual')">
+              <div class="bot-mode-card-header">
+                <span class="bot-mode-card-icon">📋</span>
+                <span class="bot-mode-indicator"></span>
+              </div>
+              <div class="bot-mode-card-title">۳. جوین دستی لیست چنل‌ها</div>
+              <div class="bot-mode-card-desc">عضویت در کانال‌های تعیین‌شده توسط شما و سپس ارسال استارت.</div>
+            </div>
+
+            <div class="bot-mode-card" id="mode-card-captcha" onclick="selectBotStartMode('captcha')">
+              <div class="bot-mode-card-header">
+                <span class="bot-mode-card-icon">🧩</span>
+                <span class="bot-mode-indicator"></span>
+              </div>
+              <div class="bot-mode-card-title">۴. بات‌های دارای کپچا (تعاملی)</div>
+              <div class="bot-mode-card-desc">نمایش شبیه‌ساز چت اختصاصی برای هر اکانت به ترتیب اولویت ➔ شما پاسخ کپچا را وارد می‌کنید.</div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 bg-surface-elevated rounded" id="subpanel-mode-smart" style="display: none; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;">
+            <div class="flex-between">
+              <h4 class="text-cyan font-bold text-xs">🧠 تنظیمات آنالیزور هوشمند پیام ربات:</h4>
+              <span class="badge-status online">موتور استخراج لینک فعال است</span>
+            </div>
+            <p class="text-xs text-muted mt-2">سیستم متن و دکمه‌های شیشه‌ای پیام بازگشتی ربات را پویش کرده و اکانت‌ها را در آنها عضو می‌کند.</p>
+            <div class="flex-gap mt-3 flex-wrap">
+              <label class="checkbox-label text-xs">
+                <input type="checkbox" id="chk-smart-reclick" checked> کلیک خودکار روی دکمه‌های «تایید عضویت / Joined / Check»
+              </label>
+              <label class="checkbox-label text-xs">
+                <input type="checkbox" id="chk-smart-delay" checked> تاخیر ۳ ثانیه‌ای بین عضویت در کانال‌ها
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3 bg-surface-elevated rounded" id="subpanel-mode-manual" style="display: none; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;">
+            <h4 class="text-cyan font-bold text-xs">📋 لیست کانال‌ها و گروه‌های اجباری (مشخص‌شده توسط شما):</h4>
+            <textarea id="manual-channels-input" class="cyber-input mono-font mt-2" rows="4" placeholder="@ChannelOne&#10;https://t.me/ChannelTwo"></textarea>
+          </div>
+
+          <div class="grid-2-cols mt-4">
+            <div class="form-group">
+              <label>تاخیر بین اکانت‌ها (ثانیه):</label>
+              <input type="number" id="bot-delay-seconds" class="cyber-input mono-font" value="4" min="1" max="60">
+            </div>
+            <div class="form-group">
+              <label>وضعیت محافظت ضد بن:</label>
+              <select id="bot-flood-protection" class="cyber-input">
+                <option value="smart">🛡️ محافظت هوشمند (توقف خودکار در صورت بروز FloodWait)</option>
+                <option value="aggressive">⚡ سرعت حداکثری</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-between mt-4">
+            <button type="button" class="btn btn-primary" id="btn-start-bot-ops" onclick="executeBotStarterOperation()">
+              🚀 شروع عملیات استارت ربات
+            </button>
+            <button type="button" class="btn btn-outline" id="btn-stop-bot-ops" onclick="stopBotStarterOperation()" style="display: none;">
+              ⏹️ توقف عملیات
+            </button>
+          </div>
+        </div>
+
+        <div class="interactive-captcha-viewport" id="captcha-interactive-viewport" style="display: none;">
+          <div class="captcha-account-banner">
+            <div class="account-banner-info">
+              <div class="account-banner-avatar" id="captcha-acc-avatar">🤖</div>
+              <div class="account-banner-meta">
+                <h4 id="captcha-acc-title">📩 دریافتی از اکانت اولویت ۱</h4>
+                <div class="mono-font text-xs text-muted" id="captcha-acc-phone">+989123456789 · سشن آنلاین</div>
+              </div>
+            </div>
+            <div class="account-step-counter" id="captcha-step-badge">مرحله ۱ از ۰ اکانت</div>
+          </div>
+
+          <div class="bot-step-pills" id="captcha-step-pills"></div>
+
+          <div class="captcha-bot-chat-wrap">
+            <div class="captcha-bot-header">
+              <div class="captcha-bot-avatar">🤖</div>
+              <div class="captcha-bot-name" id="captcha-bot-display-name">CryptoAirdropBot</div>
+              <span class="captcha-bot-badge">BOT</span>
+              <span class="text-xs text-muted mono-font" id="captcha-time-badge">هم‌اکنون</span>
+            </div>
+
+            <div class="chat-msg incoming" style="max-width: 100%;">
+              <p id="captcha-bot-text-prompt">
+                👋 کاربر گرامی! لطفاً کد امنیتی زیر را حل کنید:
+              </p>
+
+              <div class="captcha-challenge-box mt-3" id="captcha-challenge-box">
+                <span class="text-xs text-muted">تصویر یا چالش کپچای دریافتی:</span>
+                <div class="captcha-visual-code" id="captcha-visual-code">7 K R 9 W</div>
+                <div class="text-xs text-muted" id="captcha-hint-text">حروف و اعداد موجود در کادر بالا را وارد نمایید</div>
+                <div class="captcha-buttons-grid" id="captcha-buttons-grid"></div>
+              </div>
+            </div>
+
+            <div class="captcha-solve-input-bar mt-2">
+              <input type="text" id="captcha-user-input" class="cyber-input mono-font font-bold" placeholder="کد کپچا یا پاسخ را اینجا وارد کنید و اینتر بزنید..." onkeydown="if(event.key==='Enter') submitCaptchaAnswer()">
+              <button type="button" class="btn btn-primary" id="btn-submit-captcha" onclick="submitCaptchaAnswer()">
+                ↵ ارسال به ربات و انتقال به اکانت بعدی ⏭️
+              </button>
+              <button type="button" class="btn btn-outline" onclick="skipCurrentCaptchaAccount()">
+                رد کردن ⏩
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="cyber-card mt-4" id="bot-starter-monitor-box">
+          <div class="flex-between">
+            <h4>📡 گزارش مانیتورینگ زنده استارت ربات</h4>
+            <span class="badge-status online" id="bot-monitor-status">آماده</span>
+          </div>
+
+          <div class="progress-bar-bg mt-3">
+            <div class="progress-bar-fill" id="bot-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs mt-2">
+            <span id="bot-progress-text">۰ از ۰ اکانت انجام شده</span>
+            <span class="mono-font text-cyan" id="bot-progress-pct">۰٪</span>
+          </div>
+
+          <div class="mini-terminal mt-3" id="bot-terminal-stream" style="max-height: 240px; overflow-y: auto;">
+            <div class="log-line text-muted">سیستم استارت تخصصی ربات آماده به کار است.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. INBOX & BOTS TAB ================= -->
+      <section id="tab-inbox" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title" data-i18n="inboxTitle">پیوی‌ها، ربات‌ها و گفتگوها</h1>
+            <p class="panel-desc" data-i18n="inboxDesc">پشتیبانی کامل از دکمه شیشه‌ای (Inline Keyboard)، عکس با کپشن، نظرسنجی، ویس صوتی، داکیومنت، فرمت متن تلگرام (بولد، اسپویلر، نقل‌قول) و ری‌اکشن به پیام‌ها</p>
+          </div>
+        </div>
+
+        <div class="chat-manager-layout">
+          <div class="chat-sidebar cyber-card">
+            <div class="form-group">
+              <label data-i18n="lblChatAccount">انتخاب اکانت فعال:</label>
+              <select id="chat-account-select" class="cyber-input" onchange="changeChatAccount(this.value)"></select>
+            </div>
+            <div class="search-box mt-3">
+              <input type="text" id="chat-search-input" placeholder="جستجو در چت‌ها و ربات‌ها..." class="cyber-input" oninput="filterChatThreads(this.value)">
+            </div>
+            <div class="chat-thread-list mt-3" id="chat-threads"></div>
+          </div>
+
+          <div class="chat-window cyber-card">
+            <div class="chat-window-header" id="chat-header">
+              <div class="chat-user-info">
+                <div class="avatar-circle" id="chat-avatar">🤖</div>
+                <div>
+                  <h4 id="chat-contact-name">ربات تلگرام (Telegram Notifications)</h4>
+                  <span class="text-muted text-xs" id="chat-contact-sub">سرویس رسمی اعلان‌ها و شبیه‌ساز بات</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages-container"></div>
+
+            <div class="chat-rich-toolbar">
+              <div class="rich-btns-group">
+                <button type="button" class="rich-btn" onclick="applyRichFormat('bold')" title="بولد (**متن**)"><strong>B</strong></button>
+                <button type="button" class="rich-btn" onclick="applyRichFormat('italic')" title="ایتالیک (_متن_)"><em>I</em></button>
+                <button type="button" class="rich-btn" onclick="applyRichFormat('code')" title="کد منواسپیس (`کد`)"><code>&lt;&gt;</code></button>
+                <button type="button" class="rich-btn" onclick="applyRichFormat('spoiler')" title="اسپویلر (||متن مخفی||)">||S||</button>
+                <button type="button" class="rich-btn" onclick="applyRichFormat('quote')" title="نقل قول (> متن)">❝❞</button>
+                <button type="button" class="rich-btn" onclick="applyRichFormat('link')" title="لینک [متن](url)">🔗</button>
+              </div>
+              <div class="attachment-btns-group">
+                <button type="button" class="rich-btn attach-btn" onclick="openSendPhotoModal()" title="ارسال عکس">📷 عکس</button>
+                <button type="button" class="rich-btn attach-btn" onclick="openSendPollModal()" title="ارسال نظرسنجی">📊 نظرسنجی</button>
+                <button type="button" class="rich-btn attach-btn" onclick="sendVoiceMessage()" title="ارسال پیام صوتی">🎤 ویس</button>
+                <button type="button" class="rich-btn attach-btn" onclick="sendDocumentMessage()" title="ارسال فایل">📎 فایل</button>
+              </div>
+            </div>
+
+            <div class="chat-input-bar">
+              <input type="text" id="chat-input-msg" class="cyber-input" placeholder="نوشتن پیام یا دستور ربات (مثلاً /start)...">
+              <button class="btn btn-primary" id="btn-send-chat" onclick="sendChatMessage()">ارسال ➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. SELF BOT & SCHEDULER TAB ================= -->
+      <section id="tab-scheduler" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title">سِلف بات و زمان‌بندی پیام‌ها</h1>
+            <p class="panel-desc">تعریف پیام‌های زمان‌بندی شده خودکار، ارسال دوره‌ای به گروه‌ها یا مخاطبین و اتومیشن سلف</p>
+          </div>
+          <button class="btn btn-primary" id="btn-new-schedule" onclick="openAddScheduleModal()">⏱️ تعریف وظیفه جدید</button>
+        </div>
+
+        <div class="grid-3-cols" id="scheduler-cards-container"></div>
+      </section>
+
+      <!-- ================= 6. CLEANUP & PURGE TAB ================= -->
+      <section id="tab-cleanup" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title" data-i18n="cleanupTitle">پاکسازی و خروج از گفتگوها</h1>
+            <p class="panel-desc" data-i18n="cleanupDesc">مدیریت گپ‌ها، کانال‌ها و ربات‌ها، خروج دسته‌جمعی، حذف ربات‌های بلااستفاده و پاکسازی بر اساس تاریخ فعالیت یا تصادفی</p>
+          </div>
+          <div class="flex-gap">
+            <button class="btn btn-primary" onclick="executePurgeActions('leave')" data-i18n="btnExecuteLeave">🚪 خروج از موارد انتخابی</button>
+            <button class="btn btn-outline" onclick="executePurgeActions('block')" data-i18n="btnExecuteBlock">🛑 مسدودسازی ربات‌ها</button>
+          </div>
+        </div>
+
+        <div class="cyber-card">
+          <div class="grid-3-cols" style="align-items: center;">
+            <div class="form-group">
+              <label data-i18n="lblCleanupAccount">اکانت مجری پاکسازی:</label>
+              <select id="cleanup-account-select" class="cyber-input" onchange="renderCleanupDialogs()"></select>
+            </div>
+            <div class="form-group">
+              <label data-i18n="lblCleanupTypeFilter">نوع گفتگو:</label>
+              <div class="filter-chips-list mt-1" id="cleanup-type-chips">
+                <button class="filter-chip active" onclick="setCleanupTypeFilter('all')">🌐 همه (۰)</button>
+                <button class="filter-chip" onclick="setCleanupTypeFilter('group')">👥 گپ و گروه‌ها (۰)</button>
+                <button class="filter-chip" onclick="setCleanupTypeFilter('channel')">📢 کانال‌ها (۰)</button>
+                <button class="filter-chip" onclick="setCleanupTypeFilter('bot')">🤖 ربات‌ها (۰)</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label data-i18n="lblCleanupSearch">جستجو در عناوین:</label>
+              <input type="text" id="cleanup-search-input" class="cyber-input" placeholder="نام کانال، گروه یا یوزرنیم..." oninput="filterCleanupSearch(this.value)">
+            </div>
+          </div>
+
+          <div class="purge-strategy-bar mt-4">
+            <span class="strategy-label">⚡ روش‌های انتخاب هوشمند:</span>
+            <div class="flex-gap flex-wrap">
+              <button class="btn btn-sm btn-outline" onclick="cleanupSelectAll()">☑️ انتخاب همه موارد</button>
+              <button class="btn btn-sm btn-outline" onclick="cleanupSelectRandom(5)">🎲 انتخاب ۵ مورد رندوم</button>
+              <button class="btn btn-sm btn-outline" onclick="cleanupSelectRandom(10)">🎲 انتخاب ۱۰ مورد رندوم</button>
+              <button class="btn btn-sm btn-outline" onclick="cleanupSelectInactive(90)">⌛ غیرفعال‌ترین‌ها (بیش از ۳ ماه)</button>
+              <button class="btn btn-sm btn-outline" onclick="cleanupClearSelection()">❌ لغو انتخاب</button>
+            </div>
+            <div class="selected-counter">
+              <span>تعداد انتخاب شده: </span>
+              <strong id="cleanup-selected-count" class="mono-font text-cyan">۰</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="cyber-card mt-4">
+          <div class="table-responsive">
+            <table class="cyber-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;"><input type="checkbox" id="cleanup-select-all-cb" onchange="toggleCleanupAllCheckboxes(this.checked)"></th>
+                  <th data-i18n="thChatTitle">عنوان گفتگو / چت</th>
+                  <th data-i18n="thChatType">نوع</th>
+                  <th data-i18n="thChatMembers">تعداد اعضا / شناسه</th>
+                  <th data-i18n="thChatLastActivity">آخرین فعالیت / پیام</th>
+                  <th data-i18n="thChatStatus">وضعیت فعالیت</th>
+                  <th data-i18n="thActions">عملیات تکی</th>
+                </tr>
+              </thead>
+              <tbody id="cleanup-dialogs-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="cyber-card mt-4" id="cleanup-progress-box" style="display: none;">
+          <div class="flex-between">
+            <h4 id="cleanup-progress-title">در حال خروج ایمن از چت‌های انتخابی...</h4>
+            <span class="badge-status online" id="cleanup-progress-badge">درحال اجرا</span>
+          </div>
+          <div class="progress-bar-bg mt-3">
+            <div class="progress-bar-fill" id="cleanup-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs mt-2">
+            <span id="cleanup-progress-text">۰ از ۰ انجام شده</span>
+            <span class="mono-font text-cyan" id="cleanup-progress-pct">۰٪</span>
+          </div>
+          <div class="mini-terminal mt-3" id="cleanup-log-stream"></div>
+        </div>
+      </section>
+
+      <!-- ================= 7. STORAGE & RAILWAY TAB ================= -->
+      <section id="tab-storage" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h1 class="panel-title">ساختار ذخیره‌سازی داده و تنظیمات Railway</h1>
+            <p class="panel-desc">تمام سشن‌ها، پایگاه‌داده و لاگ‌ها در یک مسیر متمرکز ذخیره می‌شوند تا به راحتی به Volume ریلوی متصل شوند</p>
+          </div>
+        </div>
+
+        <div class="grid-2-cols">
+          <div class="cyber-card">
+            <h3>ساختار دایرکتوری متمرکز (Railway Volume Target)</h3>
+            <p class="text-sm text-muted mt-2">
+              با متصل کردن یک ولوم در ریلوی به مسیر <code class="mono-code">/app/data</code> یا <code class="mono-code">/data</code>، تمام فایل‌های زیر در جابه‌جایی سرورها پایدار خواهند ماند:
+            </p>
+
+            <div class="tree-view mt-4 mono-font">
+              <div class="tree-item root">📁 /data (مسیر ولوم اصلی در ریلوی)</div>
+              <div class="tree-item sub">├── 📁 sessions/ <span class="tree-comment"># فایل‌های Session و اعتبارسنجی Telethon/Pyrogram</span></div>
+              <div class="tree-item sub">├── 📁 logs/ <span class="tree-comment"># آرشیو لاگ‌های عملیات‌ها و خطایابی</span></div>
+              <div class="tree-item sub">├── 📁 config/ <span class="tree-comment"># تنظیمات کاربری، کلیدهای API و پراکسی</span></div>
+              <div class="tree-item sub">└── 📄 database.sqlite <span class="tree-comment"># دیتابیس SQLite ذخیره کاربران، وظایف و آمار</span></div>
+            </div>
+
+            <div class="status-box-highlight mt-4">
+              <div class="flex-between">
+                <span>وضعیت پوشه لوکال:</span>
+                <span class="text-green font-bold">آماده و دارای مجوز نوشتن</span>
+              </div>
+              <div class="flex-between mt-2">
+                <span>مسیر ولوم:</span>
+                <code class="mono-code text-xs">/app/data</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyber-card">
+            <h3>راهنمای دیپلوی روی Railway با دامنه دلخواه</h3>
+            <ol class="deploy-steps mt-3">
+              <li>
+                <strong>مرحله ۱:</strong> پروژه را در گیتهاب شخصی خود پوش (Push) کنید.
+              </li>
+              <li>
+                <strong>مرحله ۲:</strong> در پنل Railway گزینه <code>New Project -> Deploy from GitHub repo</code> را بزنید.
+              </li>
+              <li>
+                <strong>مرحله ۳ (بسیار مهم):</strong> روی سرویس کلیک کنید، تب <strong>Volume</strong> را باز کنید و یک Volume جدید با مسیر Mount Path: <code class="mono-code">/app/data</code> ایجاد کنید.
+              </li>
+              <li>
+                <strong>مرحله ۴ (دامنه رایگان):</strong> در تب <strong>Settings -> Networking</strong> روی <code>Generate Domain</code> کلیک کنید.
+              </li>
+            </ol>
+
+            <div class="info-alert mt-4">
+              💡 فایل‌های <code>Dockerfile</code> و <code>railway.json</code> برای اتصال خودکار پورت و ولوم داخل همین پروژه قرار دارند.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal: Add New Account (With API ID & API Hash) -->
+  <div class="modal-backdrop" id="modal-add-account">
+    <div class="modal-dialog cyber-card">
+      <div class="modal-header">
+        <h3 data-i18n="addAccountTitle">افزودن اکانت تلگرام جدید</h3>
+        <button class="modal-close" id="modal-close-btn" onclick="closeAddAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-new-account">
+          <div class="form-group">
+            <label data-i18n="accountNameLabel">نام نمایشی یا برچسب اکانت:</label>
+            <input type="text" id="acc-name-input" class="cyber-input" placeholder="مثلاً: اکانت پشتیبانی ۱" required>
+          </div>
+          <div class="form-group">
+            <label data-i18n="accountPhoneLabel">شماره تلفن (با کد کشور):</label>
+            <input type="tel" id="acc-phone-input" class="cyber-input mono-font" placeholder="+989123456789" required>
+          </div>
+          <div class="form-group mt-3">
+            <label>API ID (از سایت my.telegram.org):</label>
+            <input type="text" id="acc-api-id-input" class="cyber-input mono-font" placeholder="1234567" required>
+          </div>
+          <div class="form-group mt-3">
+            <label>API Hash:</label>
+            <input type="text" id="acc-api-hash-input" class="cyber-input mono-font" placeholder="0123456789abcdef0123456789abcdef" required>
+          </div>
+          <div class="form-group mt-3">
+            <label data-i18n="account2faLabel">رمز عبور دو مرحله‌ای (2FA - در صورت وجود):</label>
+            <input type="password" id="acc-2fa-input" class="cyber-input" placeholder="اگر اکانت پسورد دوم دارد وارد کنید">
+          </div>
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-outline" id="btn-cancel-modal" onclick="closeAddAccountModal()" data-i18n="cancel">انصراف</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-account" data-i18n="btnSubmitAccount">ارسال کد تایید (Send Code)</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create New Custom Category -->
+  <div class="modal-backdrop" id="modal-add-category">
+    <div class="modal-dialog cyber-card">
+      <div class="modal-header">
+        <h3 data-i18n="createCategoryTitle">ساخت دسته یا برچسب اختصاصی جدید</h3>
+        <button class="modal-close" id="modal-close-cat-btn" onclick="closeCategoryModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-new-category">
+          <div class="form-group">
+            <label data-i18n="categoryNameLabel">نام دسته‌بندی جدید:</label>
+            <input type="text" id="cat-name-input" class="cyber-input" placeholder="مثلاً: اکانت‌های اسپم، تبلیغات..." required>
+          </div>
+          <div class="form-group">
+            <label data-i18n="categoryIconLabel">انتخاب نماد یا ایموجی برچسب:</label>
+            <div class="reaction-selector">
+              <label><input type="radio" name="cat_icon" value="⚠️" checked> ⚠️ اسپم</label>
+              <label><input type="radio" name="cat_icon" value="🌟"> 🌟 ویژه</label>
+              <label><input type="radio" name="cat_icon" value="📢"> 📢 تبلیغات</label>
+              <label><input type="radio" name="cat_icon" value="🛡️"> 🛡️ امنیتی</label>
+              <label><input type="radio" name="cat_icon" value="🧪"> 🧪 تستی</label>
+            </div>
+          </div>
+          <div class="form-actions mt-4 flex-gap">
+            <button type="button" class="btn btn-outline" id="btn-cancel-cat-modal" onclick="closeCategoryModal()" data-i18n="cancel">انصراف</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-category" data-i18n="submitCategory">ثبت و ایجاد دسته</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Telegram Login Helper -->
+  <div class="modal-backdrop" id="modal-telegram-login">
+    <div class="modal-dialog cyber-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 id="login-modal-title" data-i18n="loginModalTitle">🔐 راهنمای ورود به تلگرام</h3>
+        <button class="modal-close" id="modal-close-login-btn" onclick="closeLoginHelper()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="login-step-card">
+          <div class="step-badge-pill" data-i18n="loginStep1Pill">مرحله ۱: وارد کردن مشخصات در دستگاه مقصد</div>
+          <p class="text-xs text-muted mt-2" data-i18n="loginStep1Desc">
+            اپلیکیشن تلگرام را در دستگاه مقصد باز کنید و این شماره تلفن را وارد نمایید:
+          </p>
+          <div class="copy-input-group mt-2">
+            <input type="text" id="login-phone-val" class="cyber-input mono-font text-cyan font-bold" readonly>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-copy-phone" onclick="copyLoginPhone()" data-i18n="btnCopyPhone">📋 کپی شماره</button>
+          </div>
+
+          <div class="mt-3">
+            <span class="text-xs text-muted" data-i18n="login2faLabel">رمز عبور دو مرحله‌ای (2FA Password):</span>
+            <div class="copy-input-group mt-1">
+              <input type="text" id="login-2fa-val" class="cyber-input mono-font" value="TelePass_2026#" readonly>
+              <button type="button" class="btn btn-sm btn-outline" id="btn-copy-2fa" onclick="copyLoginPassword()" data-i18n="btnCopy2fa">📋 کپی پسورد</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="login-step-card mt-3">
+          <div class="step-badge-pill" data-i18n="loginStep2Pill">مرحله ۲: دریافت آنی کد تایید ورود (OTP)</div>
+          <p class="text-xs text-muted mt-2" data-i18n="loginStep2Desc">
+            پس از زدن دکمه Next در تلگرام، روی دکمه زیر کلیک کنید تا کد ارسال شده واکشی شود:
+          </p>
+
+          <div class="mt-3">
+            <button type="button" class="btn btn-primary w-full" id="btn-fetch-live-code" onclick="fetchLiveLoginCode()" data-i18n="btnFetchLiveCode">
+              📡 دریافت و استخراج کد تایید تلگرام
+            </button>
+          </div>
+
+          <div class="otp-live-result-box mt-3" id="otp-live-box" style="display: none;">
+            <div class="text-xs text-green font-bold" data-i18n="otpResultSuccess">✔ پیام تایید تلگرام دریافت شد:</div>
+            <div class="otp-giant-code mono-font" id="live-otp-number">-----</div>
+            <p class="text-xs text-muted mt-1" data-i18n="otpResultDesc">این کد ۵ رقمی را در تلگرام دستگاه مقصد وارد کنید تا لاگین کامل شود.</p>
+            <button type="button" class="btn btn-sm btn-outline mt-2 w-full" id="btn-copy-live-code" onclick="copyLiveOTP()" data-i18n="btnCopyLiveOTP">
+              📋 کپی کد تایید
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add New Scheduled Task -->
+  <div class="modal-backdrop" id="modal-add-schedule">
+    <div class="modal-dialog cyber-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 id="schedule-modal-title" data-i18n="addScheduleTitle">⏱️ تعریف وظیفه زمان‌بندی جدید (سِلف بات)</h3>
+        <button class="modal-close" onclick="closeAddScheduleModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-new-schedule">
+          <div class="form-group">
+            <label data-i18n="lblScheduleTitle">عنوان وظیفه:</label>
+            <input type="text" id="schedule-title-input" class="cyber-input" placeholder="مثلاً: ارسال خودکار پیام به سوپرگروه" required>
+          </div>
+          <div class="form-group mt-3">
+            <label data-i18n="lblScheduleAccount">اکانت مجری:</label>
+            <select id="schedule-account-select" class="cyber-input"></select>
+          </div>
+          <div class="form-group mt-3">
+            <label data-i18n="lblScheduleTarget">شناسه یا مقصد (Target):</label>
+            <input type="text" id="schedule-target-input" class="cyber-input mono-font" placeholder="@CryptoGroup" required>
+          </div>
+          <div class="form-group mt-3">
+            <label data-i18n="lblScheduleFreq">دوره تکرار / زمان‌بندی:</label>
+            <select id="schedule-freq-select" class="cyber-input">
+              <option value="هر ۱ ساعت">هر ۱ ساعت (Hourly)</option>
+              <option value="هر ۶ ساعت">هر ۶ ساعت</option>
+              <option value="هر ۱۲ ساعت">هر ۱۲ ساعت</option>
+              <option value="هر روز ساعت ۱۱:۰۰" selected>هر روز ساعت ۱۱:۰۰</option>
+              <option value="هر روز ساعت ۲۰:۰۰">هر روز ساعت ۲۰:۰۰</option>
+              <option value="دوشنبه‌ها ساعت ۱۴:۰۰">دوشنبه‌ها ساعت ۱۴:۰۰</option>
+            </select>
+          </div>
+          <div class="form-group mt-3">
+            <label data-i18n="lblScheduleNextRun">زمان اولین اجرا:</label>
+            <input type="text" id="schedule-nextrun-input" class="cyber-input" value="۱ ساعت دیگر" required>
+          </div>
+          <div class="form-group mt-3">
+            <label data-i18n="lblScheduleContent">متن پیام یا دستور خودکار:</label>
+            <textarea id="schedule-content-input" class="cyber-input" rows="3" placeholder="متن پیام خودکار..."></textarea>
+          </div>
+          <div class="form-actions mt-4 flex-gap">
+            <button type="button" class="btn btn-outline" onclick="closeAddScheduleModal()" data-i18n="cancel">انصراف</button>
+            <button type="submit" class="btn btn-primary" data-i18n="btnSubmitSchedule">ثبت و شروع زمان‌بندی ➔</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Send Photo -->
+  <div class="modal-backdrop" id="modal-send-photo">
+    <div class="modal-dialog cyber-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 data-i18n="sendPhotoTitle">📷 ارسال عکس همراه با کپشن</h3>
+        <button class="modal-close" onclick="closeSendPhotoModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label data-i18n="lblPhotoChoice">انتخاب یا تصویر نمونه:</label>
+          <div class="flex-gap mt-1">
+            <button type="button" class="filter-chip active" onclick="selectSamplePhoto('crypto', this)">📈 چارت کریپتو</button>
+            <button type="button" class="filter-chip" onclick="selectSamplePhoto('banner', this)">🎨 بنر تبلیغاتی</button>
+            <button type="button" class="filter-chip" onclick="selectSamplePhoto('logo', this)">💎 لوگو ربات</button>
+          </div>
+          <input type="text" id="photo-url-input" class="cyber-input mono-font mt-2" value="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=600">
+        </div>
+        <div class="form-group mt-3">
+          <label data-i18n="lblPhotoCaption">کپشن عکس:</label>
+          <textarea id="photo-caption-input" class="cyber-input" rows="3" placeholder="**سیگنال خرید جدید** 🔥&#10;تارگت اول: 100K"></textarea>
+        </div>
+        <div class="form-actions mt-4 flex-gap">
+          <button type="button" class="btn btn-outline" onclick="closeSendPhotoModal()" data-i18n="cancel">انصراف</button>
+          <button type="button" class="btn btn-primary" onclick="submitSendPhoto()" data-i18n="btnSendPhoto">ارسال عکس به چت ➔</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create Poll -->
+  <div class="modal-backdrop" id="modal-create-poll">
+    <div class="modal-dialog cyber-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 data-i18n="createPollTitle">📊 ساخت و ارسال نظرسنجی تلگرام</h3>
+        <button class="modal-close" onclick="closeSendPollModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label data-i18n="lblPollQuestion">صورت سوال یا موضوع نظرسنجی:</label>
+          <input type="text" id="poll-q-input" class="cyber-input" value="آیا با استراتژی جدید موافق هستید؟">
+        </div>
+        <div class="form-group mt-3">
+          <label data-i18n="lblPollOptions">گزینه‌های نظرسنجی:</label>
+          <input type="text" id="poll-opt-1" class="cyber-input mt-1" value="بله، کاملاً موافقم 🔥">
+          <input type="text" id="poll-opt-2" class="cyber-input mt-1" value="خیر، نیاز به بازبینی دارد ⚠️">
+          <input type="text" id="poll-opt-3" class="cyber-input mt-1" value="فعلاً نظری ندارم 🤔">
+        </div>
+        <div class="form-actions mt-4 flex-gap">
+          <button type="button" class="btn btn-outline" onclick="closeSendPollModal()" data-i18n="cancel">انصراف</button>
+          <button type="submit" class="btn btn-primary" onclick="submitSendPoll()" data-i18n="btnSendPoll">ارسال نظرسنجی به چت ➔</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
