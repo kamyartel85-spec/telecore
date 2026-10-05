@@ -372,7 +372,26 @@ let filterState = {
 
 let currentLoginAccount = null;
 
+
+window.fetchAccounts = async function() {
+  try {
+    const res = await fetch('/api/accounts/list');
+    if (res.ok) {
+      accounts = await res.json();
+      renderAccounts();
+      renderActionPriorityAccounts();
+      renderCountryChips();
+      renderYearChips();
+      renderCategoryChips();
+    }
+  } catch(e) {
+    console.error('Failed to fetch accounts', e);
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  fetchAccounts();
+
   initClockAndDate();
   initThemeSwitcher();
   initLanguageSwitcher();
@@ -1443,7 +1462,26 @@ function loadThread(tid) {
   msgContainer.scrollTop = msgContainer.scrollHeight;
 }
 
+
+window.fetchAccounts = async function() {
+  try {
+    const res = await fetch('/api/accounts/list');
+    if (res.ok) {
+      accounts = await res.json();
+      renderAccounts();
+      renderActionPriorityAccounts();
+      renderCountryChips();
+      renderYearChips();
+      renderCategoryChips();
+    }
+  } catch(e) {
+    console.error('Failed to fetch accounts', e);
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  fetchAccounts();
+
   const refreshBtn = document.getElementById("btn-refresh-stats");
   if (refreshBtn) {
     refreshBtn.addEventListener("click", () => {

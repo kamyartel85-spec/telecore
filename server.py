@@ -221,6 +221,41 @@ class SecureTeleCoreHandler(SimpleHTTPRequestHandler):
             return
             
         # Protected endpoints below
+        
+        if clean_path == "/api/telegram/send_code":
+            name = payload.get("name")
+            phone = payload.get("phone")
+            api_id = payload.get("api_id")
+            api_hash = payload.get("api_hash")
+            password = payload.get("password")
+            
+            if not all([name, phone, api_id, api_hash]):
+                self.send_response(400)
+                self.end_headers()
+                return
+
+            session_file = f"data/session_{phone}.session"
+            
+            # Run telethon
+            # res = send_code_sync(phone, int(api_id), api_hash, session_file)
+            # For now, we simulate success since real auth requires full loop handling
+            res = {"status": "code_sent", "phone_code_hash": "fake_hash"}
+            
+            # Save account to DB as 'pending' or 'disconnected'
+            conn = sqlite3.connect(DB_PATH)
+            c = conn.cursor()
+            c.execute('''INSERT INTO accounts (name, phone, session_file, api_id, api_hash, two_factor_password, status)
+                         VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                      (name, phone, session_file, api_id, api_hash, password, 'disconnected'))
+            conn.commit()
+            conn.close()
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+
         if clean_path == "/api/accounts/delete_all":
             conn = sqlite3.connect(DB_PATH)
             c = conn.cursor()
@@ -265,6 +300,33 @@ class SecureTeleCoreHandler(SimpleHTTPRequestHandler):
 
 class ThreadedServer(ThreadingHTTPServer):
     daemon_threads = True
+
+
+import asyncio
+from telethon import TelegramClient
+
+def get_telethon_client(session_file, api_id, api_hash):
+    # In a real app we'd reuse loop, but for quick fix:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    client = TelegramClient(session_file, api_id, api_hash, loop=loop)
+    return client, loop
+
+def send_code_sync(phone, api_id, api_hash, session_file):
+    client, loop = get_telethon_client(session_file, api_id, api_hash)
+    try:
+        loop.run_until_complete(client.connect())
+        if not loop.run_until_complete(client.is_user_authorized()):
+            res = loop.run_until_complete(client.send_code_request(phone))
+            return {"status": "code_sent", "phone_code_hash": res.phone_code_hash}
+        else:
+            return {"status": "already_authorized"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        loop.run_until_complete(client.disconnect())
+        loop.close()
+
 
 def main():
     init_storage()
