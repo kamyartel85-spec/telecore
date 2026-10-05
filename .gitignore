@@ -1,0 +1,23 @@
+# Sensitive volume and session data
+data/
+*.session
+*.session-journal
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Python cache & environment
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,6 @@
+# TeleCore minimal requirements
+# Using standard library http.server and sqlite3
+# You can optionally add telethon or pyrogram when ready to connect real Telegram API:
+# telethon>=1.34.0
+
+telethon==1.34.0

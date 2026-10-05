@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>TeleCore - Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--bg-color); color: var(--text-color); font-family: Tahoma, sans-serif; }
+    .login-box { background: var(--card-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--border-color); width: 400px; text-align: center; }
+    h2 { margin-bottom: 10px; color: var(--cyan); }
+    .form-group { margin-bottom: 20px; text-align: right; }
+    label { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+    input { width: 100%; padding: 10px; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 8px; }
+    .btn { width: 100%; padding: 12px; background: var(--cyan); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body class="theme-cyberpunk">
+  <div class="login-box">
+    <h2>🔐 ورود به پنل TeleCore</h2>
+    <p style="font-size: 0.85rem; color: #888; margin-bottom: 25px;">سیستم مدیریت امن تلگرام</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label>نام کاربری</label>
+        <input type="text" id="username" required>
+      </div>
+      <div class="form-group">
+        <label>رمز عبور</label>
+        <input type="password" id="password" required>
+      </div>
+      <button type="submit" class="btn">ورود به سیستم</button>
+    </form>
+    <div id="error-msg" style="color: #ff4d4d; margin-top: 15px; font-size: 0.85rem; display: none;">نام کاربری یا رمز اشتباه است.</div>
+  </div>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      });
+      if (res.ok) {
+        window.location.href = '/';
+      } else {
+        document.getElementById('error-msg').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
