@@ -1067,7 +1067,7 @@ function initModals() {
       e.preventDefault();
       const nameInput = document.getElementById("cat-name-input");
       const name = nameInput ? nameInput.value.trim() : "";
-      const icon = document.querySelector('input[name="cat_icon"]:checked')?.value || "📁";
+      const icon = (document.querySelector('input[name="cat_icon"]:checked') ? document.querySelector('input[name="cat_icon"]:checked').value : null) || "📁";
 
       if (!name) return;
 
@@ -1127,12 +1127,12 @@ function initModals() {
   if (schedForm) {
     schedForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const title = document.getElementById("schedule-title-input")?.value.trim();
-      const account = document.getElementById("schedule-account-select")?.value;
-      const target = document.getElementById("schedule-target-input")?.value.trim();
-      const freq = document.getElementById("schedule-freq-select")?.value;
-      const nextRun = document.getElementById("schedule-nextrun-input")?.value.trim() || "۱ ساعت دیگر";
-      const content = document.getElementById("schedule-content-input")?.value.trim();
+      const title = (document.getElementById("schedule-title-input") ? document.getElementById("schedule-title-input").value.trim() : "");
+      const account = (document.getElementById("schedule-account-select") ? document.getElementById("schedule-account-select").value : "");
+      const target = (document.getElementById("schedule-target-input") ? document.getElementById("schedule-target-input").value.trim() : "");
+      const freq = (document.getElementById("schedule-freq-select") ? document.getElementById("schedule-freq-select").value : "");
+      const nextRun = (document.getElementById("schedule-nextrun-input") ? document.getElementById("schedule-nextrun-input").value.trim() : "") || "۱ ساعت دیگر";
+      const content = (document.getElementById("schedule-content-input") ? document.getElementById("schedule-content-input").value.trim() : "");
 
       if (!title || !target) return;
 
@@ -1168,7 +1168,7 @@ function renderActionPriorityAccounts() {
 
   if (orderTextEl) {
     if (selectedPriorityAccounts.length > 0) {
-      const orderNames = selectedPriorityAccounts.map(id => accounts.find(a => a.id === id)?.name || id).join(" ➔ ");
+      const orderNames = selectedPriorityAccounts.map(id => (accounts.find(a => a.id === id) ? accounts.find(a => a.id === id).name : undefined) || id).join(" ➔ ");
       orderTextEl.innerHTML = `<span class="text-xs text-muted">ترتیب اجرا: </span><span class="text-xs text-cyan font-bold">${orderNames}</span>`;
     } else {
       orderTextEl.innerHTML = `<span class="text-xs text-pink">هیچ اکانتی انتخاب نشده است.</span>`;
@@ -1329,8 +1329,8 @@ function runMassAction() {
   const type = document.getElementById("action-type").value;
   const target = document.getElementById("action-target").value.trim();
   const delay = parseInt(document.getElementById("action-delay").value, 10) || 3;
-  const isScheduledComment = document.getElementById("chk-schedule-comment")?.checked;
-  const scheduleTime = document.getElementById("comment-schedule-time")?.value || "هر روز ساعت ۱۲:۳۰";
+  const isScheduledComment = (document.getElementById("chk-schedule-comment") ? document.getElementById("chk-schedule-comment").checked : false);
+  const scheduleTime = (document.getElementById("comment-schedule-time") ? document.getElementById("comment-schedule-time").value : "") || "هر روز ساعت ۱۲:۳۰";
 
   if (selectedPriorityAccounts.length === 0) {
     alert("لطفاً حداقل یک اکانت را با کلیک انتخاب کنید!");
@@ -1376,7 +1376,7 @@ function runMassAction() {
   let currentStep = 0;
 
   let commentPool = ["پروژه فوق‌العاده‌ای هست! 🔥", "تحلیل بسیار مفیدی بود 👏"];
-  const customComments = document.getElementById("action-comment-input")?.value.trim().split("\n").filter(l => l.trim().length > 0);
+  const customComments = (document.getElementById("action-comment-input") ? document.getElementById("action-comment-input").value.trim() : "").split("\n").filter(l => l.trim().length > 0);
   if (customComments && customComments.length > 0) commentPool = customComments;
 
   addLog("ACTION", `شروع عملیات [${type}] با اولویت ترتیبی برای ${total} اکانت روی مقصد ${target}`);
