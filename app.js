@@ -376,6 +376,14 @@ let currentLoginAccount = null;
 window.fetchAccounts = async function() {
   try {
     const res = await fetch('/api/accounts/list');
+    if (res.status === 401) {
+      if (res.headers.get("X-Setup-Required")) {
+        window.location.href = "/setup.html";
+      } else {
+        window.location.href = "/login.html";
+      }
+      return;
+    }
     if (res.ok) {
       accounts = await res.json();
       renderAccounts();
@@ -440,7 +448,7 @@ function initClockAndDate() {
           weekday: 'long'
         }).format(now);
       }
-    } catch {
+    } catch(e) {
       dateEl.textContent = now.toLocaleDateString();
     }
   }
@@ -658,8 +666,8 @@ function renderCountryChips() {
     const sample = accounts.find(a => a.country === c);
     const countryLabel = isAll 
       ? t("allCountries") 
-      : (currentLang === "en" && sample?.countryEn ? sample.countryEn : c);
-    const flag = isAll ? "🌐" : (sample?.flag || "");
+      : (currentLang === "en" && (sample && sample.countryEn) ? sample.countryEn : c);
+    const flag = isAll ? "🌐" : ((sample && sample.flag) || "");
     const count = isAll ? accounts.length : accounts.filter(a => a.country === c).length;
     return `
       <button class="filter-chip ${filterState.country === c ? 'active' : ''}" onclick="setCountryFilter('${c}')">
@@ -1466,6 +1474,14 @@ function loadThread(tid) {
 window.fetchAccounts = async function() {
   try {
     const res = await fetch('/api/accounts/list');
+    if (res.status === 401) {
+      if (res.headers.get("X-Setup-Required")) {
+        window.location.href = "/setup.html";
+      } else {
+        window.location.href = "/login.html";
+      }
+      return;
+    }
     if (res.ok) {
       accounts = await res.json();
       renderAccounts();

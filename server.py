@@ -144,14 +144,19 @@ class SecureTeleCoreHandler(SimpleHTTPRequestHandler):
             return
 
         # Setup enforcement
-        if not admin_exists() and clean_path not in ["/setup.html", "/style.css"]:
+if not admin_exists() and clean_path not in ["/setup.html", "/style.css", "/app.js"]:
+            if clean_path.startswith("/api/"):
+                self.send_response(401)
+                self.send_header("X-Setup-Required", "true")
+                self.end_headers()
+                return
             self.send_response(302)
             self.send_header("Location", "/setup.html")
             self.end_headers()
             return
             
         # Auth enforcement
-        if admin_exists() and clean_path not in ["/login.html", "/style.css"] and not check_auth(self.headers):
+        if admin_exists() and clean_path not in ["/login.html", "/style.css", "/app.js"] and not check_auth(self.headers):
             if clean_path.startswith("/api/"):
                 self.send_response(401)
                 self.end_headers()
