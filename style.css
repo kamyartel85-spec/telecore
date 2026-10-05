@@ -952,7 +952,7 @@ body.theme-light .chat-msg.outgoing { color: #fff; }
   .dashboard-activity-grid { grid-template-columns: 1fr !important; }
 }
 
-/* ================= RECENT EVENTS & UPCOMING ACTIONS ================= */
+/* ================= RECENT EVENTS & UPCOMING ACTIONS (SCREENSHOT MATCH) ================= */
 .dashboard-activity-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -1043,6 +1043,7 @@ body.theme-cyberpunk .activity-card-title {
   background: var(--bg-surface-elevated);
 }
 
+/* Event Items (رویدادهای اخیر) */
 .event-items-list {
   display: flex;
   flex-direction: column;
@@ -1140,6 +1141,7 @@ body.theme-cyberpunk .icon-white {
   color: #ff6a3d;
 }
 
+/* Upcoming Actions (اقدام‌های بعدی) */
 .upcoming-items-list {
   display: flex;
   flex-direction: column;
@@ -1231,7 +1233,7 @@ body.theme-light .badge-queue {
   border-color: rgba(37, 99, 235, 0.2);
 }
 
-/* ================= ACCOUNT FILTERS & METRICS ================= */
+/* ================= ACCOUNT FILTERS, METRICS & ENHANCEMENTS ================= */
 .account-stats-bar {
   display: flex;
   gap: 12px;
@@ -1371,6 +1373,7 @@ body.theme-cream .filter-chip.active, body.theme-light .filter-chip.active {
   padding: 0 4px;
 }
 
+/* Account Card Enhancements */
 .acc-meta-tags {
   display: flex;
   flex-wrap: wrap;
@@ -1470,6 +1473,7 @@ body.theme-cream .filter-chip.active, body.theme-light .filter-chip.active {
   border-style: dashed;
 }
 
+/* Compact Header (Always Visible) */
 .acc-accordion-header {
   display: flex;
   align-items: center;
@@ -1560,6 +1564,7 @@ body.theme-cream .filter-chip.active, body.theme-light .filter-chip.active {
   color: var(--accent-cyan);
 }
 
+/* Collapsible Body (Details & Actions) */
 .acc-accordion-body {
   display: none;
   padding: 16px 20px 18px 20px;
@@ -1611,6 +1616,26 @@ body.theme-cream .filter-chip.active, body.theme-light .filter-chip.active {
   flex-wrap: wrap;
   padding-top: 10px;
   border-top: 1px dashed var(--border-color);
+}
+
+.btn-disconnect {
+  background: rgba(255, 77, 79, 0.12) !important;
+  color: #ff4d4f !important;
+  border: 1px solid rgba(255, 77, 79, 0.4) !important;
+}
+.btn-disconnect:hover {
+  background: #ff4d4f !important;
+  color: #fff !important;
+}
+
+.btn-reconnect {
+  background: rgba(0, 255, 136, 0.12) !important;
+  color: #00ff88 !important;
+  border: 1px solid rgba(0, 255, 136, 0.4) !important;
+}
+.btn-reconnect:hover {
+  background: #00ff88 !important;
+  color: #000 !important;
 }
 
 /* ================= TELEGRAM LOGIN HELPER MODAL ================= */
@@ -1709,7 +1734,11 @@ html[dir="ltr"] #btn-clear-smart-search {
   right: 10px;
 }
 
-/* ================= ACCOUNT PRIORITY SELECTION ================= */
+
+
+
+
+/* ================= ACCOUNT PRIORITY SELECTION (CLICK ORDER) ================= */
 .account-priority-box {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
@@ -1899,6 +1928,7 @@ html[dir="ltr"] .tg-quote {
   padding-left: 8px;
 }
 
+/* Inline Keyboards (Glass buttons) */
 .tg-inline-keyboard {
   display: flex;
   flex-direction: column;
@@ -1929,6 +1959,7 @@ html[dir="ltr"] .tg-quote {
   color: var(--accent-cyan);
 }
 
+/* Photos */
 .tg-photo-msg {
   border-radius: 8px;
   overflow: hidden;
@@ -1942,6 +1973,7 @@ html[dir="ltr"] .tg-quote {
   display: block;
 }
 
+/* Polls */
 .tg-poll-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
@@ -1988,6 +2020,7 @@ html[dir="ltr"] .tg-quote {
   z-index: 1;
 }
 
+/* Voice Message */
 .tg-voice-card {
   display: flex;
   align-items: center;
@@ -2025,6 +2058,7 @@ html[dir="ltr"] .tg-quote {
   transition: height 0.2s;
 }
 
+/* Document */
 .tg-doc-card {
   display: flex;
   align-items: center;
@@ -2038,6 +2072,7 @@ html[dir="ltr"] .tg-quote {
   font-size: 1.5rem;
 }
 
+/* Message Reaction Tags */
 .tg-msg-reactions {
   display: flex;
   gap: 4px;
@@ -2202,6 +2237,7 @@ body.theme-light .bot-mode-card.active {
   font-size: 0.75rem;
 }
 
+/* Captcha Interactive Viewport */
 .interactive-captcha-viewport {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);

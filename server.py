@@ -221,6 +221,32 @@ class SecureTeleCoreHandler(SimpleHTTPRequestHandler):
             return
             
         # Protected endpoints below
+        if clean_path == "/api/accounts/delete_all":
+            conn = sqlite3.connect(DB_PATH)
+            c = conn.cursor()
+            c.execute("DELETE FROM accounts")
+            conn.commit()
+            conn.close()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok"}).encode("utf-8"))
+            return
+
+        if clean_path == "/api/accounts/delete":
+            account_id = payload.get("id")
+            if account_id is not None:
+                conn = sqlite3.connect(DB_PATH)
+                c = conn.cursor()
+                c.execute("DELETE FROM accounts WHERE id=?", (account_id,))
+                conn.commit()
+                conn.close()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}).encode("utf-8"))
+                return
+
         if clean_path == "/api/accounts/list":
             conn = sqlite3.connect(DB_PATH)
             conn.row_factory = sqlite3.Row
